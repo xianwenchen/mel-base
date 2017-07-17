@@ -34,6 +34,9 @@
 
 (defsystem mel-base
     :version "0.9.3"
+    :license "BSD 2-Clause"
+    :author "Jochen H. Schmidt <js@neonsqua.re>"
+    :description "A library for handling email with support for Maildir, POP3, IMAP and SMTP folders."
     :components ((:module "folders"
 			  :depends-on 
 			  ("protocols"
