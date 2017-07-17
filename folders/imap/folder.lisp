@@ -107,7 +107,7 @@
 
 (defclass imaps-folder (imap-folder) ())
                   
-(defun make-imap-folder (&key (host "imap.web.de")(port 143) username password (mailbox "INBOX"))
+(defun make-imap-folder (&key host (port 143) username password (mailbox "INBOX"))
   (make-instance 'imap-folder
                  :name (format nil "imap://~A!~A@~A:~A" username password host port)
                  :host host
@@ -117,7 +117,7 @@
 		 :mailbox mailbox
                  :state :disconnected))
 
-(defun make-imaps-folder (&key (host "imap.web.de")(port 993) username password (mailbox "INBOX"))
+(defun make-imaps-folder (&key host (port 993) username password (mailbox "INBOX"))
   (make-instance 'imaps-folder
                  :name (format nil "imaps://~A!~A@~A:~A" username password host port)
                  :host host

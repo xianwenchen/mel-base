@@ -84,7 +84,7 @@
     (values :ok (string-left-trim " " (subseq response 3)))
     (values :error (string-left-trim " " (subseq response 4)))))
             
-(defun make-pop3-folder (&key (host "pop.web.de")(port 110) username password)
+(defun make-pop3-folder (&key host (port 110) username password)
   (make-instance 'pop3-folder 
                  :name (format nil "pop3://~A!~A@~A:~A" username password host port)
                  :host host

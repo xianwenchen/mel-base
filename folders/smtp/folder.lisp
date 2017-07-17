@@ -145,7 +145,7 @@
                            (error 'end-of-file :stream in-stream)
                            (values eof-value t))))))))
 
-(defun make-smtp-relay-folder (&key (host "mail.web.de")(port 25) username password)
+(defun make-smtp-relay-folder (&key host (port 25) username password)
   (make-instance 'smtp-relay-folder 
                  :name (format nil "smtp://~A!~A@~A:~A" username password host port)
                  :host host
