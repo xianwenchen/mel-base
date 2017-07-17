@@ -74,9 +74,8 @@
 
 		 (:file "package-tools")
 		 (:file "smeta")
-		 (:file "packages" :depends-on ("package-tools" "lisp-dep" #-sbcl "md5"))
-		 #-sbcl (:file "md5")
-		 (:file "hmac-md5" :depends-on ("packages" #-sbcl "md5"))
+		 (:file "packages" :depends-on ("package-tools" "lisp-dep"))
+		 (:file "hmac-md5" :depends-on ("packages"))
 		 (:file "rfc2822" :depends-on ("packages" "smeta"))
 		 (:file "mime" :depends-on ("rfc2822"))
 		 (:file "multiparts" :depends-on ("mime" "protocols"))
@@ -85,5 +84,5 @@
 		 (:file "encapsulating-stream" :depends-on ("packages"))
 		 (:file "line-terminator-filter" :depends-on ("encapsulating-stream"))
 		 (:file "compose-message" :depends-on ("protocols" "mime")))
-    :depends-on (#+sbcl sb-posix #+sbcl sb-md5 #+sbcl sb-bsd-sockets
-			#+cmu uffi flexi-streams #-lispworks cl+ssl usocket))
+    :depends-on (#+sbcl sb-posix #+sbcl sb-bsd-sockets
+			#+cmu uffi flexi-streams #-lispworks cl+ssl usocket babel ironclad))

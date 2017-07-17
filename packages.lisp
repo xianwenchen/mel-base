@@ -224,12 +224,10 @@
      ))
 
 (defpackage* :mel.cipher
-    (:use :cl :mel.utils #+sbcl :sb-md5 #-sbcl :mel.cipher.md5)
+    (:use :cl)
     (:use-external :mel.internal)
     (:export
-     "HMAC-MD5"
-     "STRING-TO-OCTETS"
-     "OCTETS-TO-HEX"))
+     "HMAC-MD5"))
 
 
 ;; Folders

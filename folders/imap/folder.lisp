@@ -473,7 +473,7 @@
                       (declare (ignore arguments))
                       (let ((timestamp (map 'string #'code-char (mel.mime::decode-base64 arg1))))
                         (format t "(Challenge) ~A~%" timestamp)
-                        (let ((username (mel.cipher:string-to-octets (format nil "~A " (username sink-folder))))
+                        (let ((username (babel:string-to-octets (format nil "~A " (username sink-folder))))
                               (digest (mel.cipher:hmac-md5 timestamp (password sink-folder))))
                           (let ((response (concatenate 'vector username digest)))
                             (format t "(Response) ~A~%" (map 'string #'code-char response))
