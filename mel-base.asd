@@ -37,7 +37,6 @@
     :components ((:module "folders"
 			  :depends-on 
 			  ("protocols"
-			   "base64-stream"
 			   "line-terminator-filter" 
 			   "encapsulating-stream"
 			   "lisp-dep"
@@ -80,9 +79,8 @@
 		 (:file "mime" :depends-on ("rfc2822"))
 		 (:file "multiparts" :depends-on ("mime" "protocols"))
 		 (:file "quoted-printable-stream" :depends-on ("encapsulating-stream"))
-		 (:file "base64-stream" :depends-on ("encapsulating-stream"))
 		 (:file "encapsulating-stream" :depends-on ("packages"))
 		 (:file "line-terminator-filter" :depends-on ("encapsulating-stream"))
 		 (:file "compose-message" :depends-on ("protocols" "mime")))
     :depends-on (#+sbcl sb-posix #+sbcl sb-bsd-sockets
-			#+cmu uffi flexi-streams #-lispworks cl+ssl usocket babel ironclad))
+			#+cmu uffi flexi-streams #-lispworks cl+ssl usocket babel ironclad cl-base64))

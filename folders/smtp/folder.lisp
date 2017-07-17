@@ -171,7 +171,7 @@
     (loop for c across password
           for i from (+ 2 (length user)) do (setf (aref ticket i) (char-code c)))
 	  
-    (values (weird-mail.mime::encode-base64 ticket) ticket)))
+    (values (cl-base64:usb8-array-to-base64-string ticket) ticket)))
 
 (defmethod ensure-connection ((folder smtp-relay-folder))
   (when (eq (state folder) :disconnected)
