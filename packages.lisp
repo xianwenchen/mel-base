@@ -29,14 +29,6 @@
 
 (in-package :cl-user)
 
-(defpackage mel.dictionary
-  (:use :mel.utils :cl)
-  (:nicknames weird-mail.dictionary)
-  (:export "DICTIONARY"
-	   "MAKE-DICTIONARY"
-	   "*GERMAN*"
-	   "LOOKUP-WORD"))
-
 ;; The interface for normal use of the mail-library
 (defpackage* :mel.public
   (:use :cl :mel.utils)
