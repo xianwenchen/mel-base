@@ -20,7 +20,7 @@
      (loop with buffer = (make-array length :element-type 'character)
         for count = (read-sequence buffer in)
         while (> count 0)
-        do (write-sequence (mel.mime::decode-base64 buffer) out)
+           do (write-sequence (cl-base64:base64-string-to-usb8-array buffer) out)
           (flet ((peek ()(peek-char nil in nil :eof))
                  (consume () (read-char in nil :eof)))
             (tagbody

@@ -162,7 +162,7 @@
 			(loop with buffer = (make-array 60 :element-type '(unsigned-byte 8))
 			      for count = (read-sequence buffer in)
 			      while (> count 0)
-			      do (write-sequence (encode-base64 buffer) stream)
+			      do (write-sequence (cl-base64:usb8-array-to-base64-string buffer) stream)
 			      	(write-char #\return stream)
 				(write-char #\linefeed stream)))))
     (format stream "--~A--~A~A"  boundary-tag #\return #\linefeed)))

@@ -29,14 +29,6 @@
 
 (in-package :cl-user)
 
-(defpackage mel.dictionary
-  (:use :mel.utils :cl)
-  (:nicknames weird-mail.dictionary)
-  (:export "DICTIONARY"
-	   "MAKE-DICTIONARY"
-	   "*GERMAN*"
-	   "LOOKUP-WORD"))
-
 ;; The interface for normal use of the mail-library
 (defpackage* :mel.public
   (:use :cl :mel.utils)
@@ -224,12 +216,10 @@
      ))
 
 (defpackage* :mel.cipher
-    (:use :cl :mel.utils #+sbcl :sb-md5 #-sbcl :mel.cipher.md5)
+    (:use :cl)
     (:use-external :mel.internal)
     (:export
-     "HMAC-MD5"
-     "STRING-TO-OCTETS"
-     "OCTETS-TO-HEX"))
+     "HMAC-MD5"))
 
 
 ;; Folders

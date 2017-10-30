@@ -145,7 +145,7 @@
                            (error 'end-of-file :stream in-stream)
                            (values eof-value t))))))))
 
-(defun make-smtp-relay-folder (&key (host "mail.web.de")(port 25) username password)
+(defun make-smtp-relay-folder (&key host (port 25) username password)
   (make-instance 'smtp-relay-folder 
                  :name (format nil "smtp://~A!~A@~A:~A" username password host port)
                  :host host
@@ -171,7 +171,7 @@
     (loop for c across password
           for i from (+ 2 (length user)) do (setf (aref ticket i) (char-code c)))
 	  
-    (values (weird-mail.mime::encode-base64 ticket) ticket)))
+    (values (cl-base64:usb8-array-to-base64-string ticket) ticket)))
 
 (defmethod ensure-connection ((folder smtp-relay-folder))
   (when (eq (state folder) :disconnected)

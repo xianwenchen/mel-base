@@ -107,7 +107,7 @@
 
 (defclass imaps-folder (imap-folder) ())
                   
-(defun make-imap-folder (&key (host "imap.web.de")(port 143) username password (mailbox "INBOX"))
+(defun make-imap-folder (&key host (port 143) username password (mailbox "INBOX"))
   (make-instance 'imap-folder
                  :name (format nil "imap://~A!~A@~A:~A" username password host port)
                  :host host
@@ -117,7 +117,7 @@
 		 :mailbox mailbox
                  :state :disconnected))
 
-(defun make-imaps-folder (&key (host "imap.web.de")(port 993) username password (mailbox "INBOX"))
+(defun make-imaps-folder (&key host (port 993) username password (mailbox "INBOX"))
   (make-instance 'imaps-folder
                  :name (format nil "imaps://~A!~A@~A:~A" username password host port)
                  :host host
@@ -471,13 +471,13 @@
    sink-folder 
    :on-continuation (lambda (arg1 arguments)
                       (declare (ignore arguments))
-                      (let ((timestamp (map 'string #'code-char (mel.mime::decode-base64 arg1))))
+                      (let ((timestamp (map 'string #'code-char (cl-base64:base64-string-to-usb8-array arg1))))
                         (format t "(Challenge) ~A~%" timestamp)
-                        (let ((username (mel.cipher:string-to-octets (format nil "~A " (username sink-folder))))
+                        (let ((username (babel:string-to-octets (format nil "~A " (username sink-folder))))
                               (digest (mel.cipher:hmac-md5 timestamp (password sink-folder))))
                           (let ((response (concatenate 'vector username digest)))
                             (format t "(Response) ~A~%" (map 'string #'code-char response))
-                            (write-string (mel.mime::encode-base64 response)
+                            (write-string (cl-base64:usb8-array-to-base64-string response)
                                           (connection sink-folder))
                             (write-char #\return (connection sink-folder))
                             (write-char #\linefeed (connection sink-folder))
