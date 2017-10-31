@@ -82,8 +82,11 @@
 
 (defclass rfc2822-basic-message (rfc2822-header-mixin rfc2822-basic-body-mixin message) ())
 
-(declaim (inline transmit-field-body))
-(defun transmit-field-body (in-stream out-stream)
+(declaim (inline read-field-body))
+(defun read-field-body (in-stream out-stream)
+  "Reads field body from in-stream and writes it to the out-stream,
+by doing unfolding."
+
   (declare (optimize (speed 3) (safety 0)))
   (let ((octets 0))
     (declare (fixnum octets))
@@ -119,8 +122,22 @@
                      (go nl)))
      
 
-       nl (cond ((accept #\space #\tab) (incf octets) (write-char #\newline out-stream) 
-                 (write-char #\space out-stream) (go start))
+       ;; Doing unfolding if CRLF is followed by space or tab,
+       ;; according to standard, removing CRLF:
+       ;;
+       ;;   "Unfolding is accomplished by simply removing any CRLF
+       ;;    that is immediately followed by WSP.  Each header field should be
+       ;;    treated in its unfolded form for further syntactic and semantic
+       ;;    evaluation."
+       ;;
+       nl (cond ((accept #\space)
+                 (incf octets)
+                 (write-char #\space out-stream)
+                 (go start))
+                ((accept #\tab)
+                 (incf octets)
+                 (write-char #\tab out-stream)
+                 (go start))
                 (t (go exit)))
 
        exit)))
@@ -128,6 +145,10 @@
 
 (declaim (inline accept-newline))
 (defun accept-newline (stream)
+  "Eats a new line CRLF symbols from stream and returns number of readed bytes.
+
+Otherwise, returns nil."
+  
   (declare (optimize (speed 3) (safety 0)))
   (let ((c (peek-char nil stream nil nil)))
     (when c
@@ -140,6 +161,8 @@
 			((eql (peek-char nil stream) #\return)
 			 (read-char stream)
 			 (if (eql (peek-char nil stream) #\linefeed)
+                             ;; Probably, here we need to read-char
+                             ;; to consume a third character from the stream?
 			     3
 			     2))
                         (t (mime-parse-error "accepting newline: LF expected after CR"))))
@@ -160,7 +183,21 @@
   (declare (optimize (speed 3) (safety 0)))
   (let ((next-char (peek-char nil stream)))
     (when (and char (char= next-char char))
-      (read-char stream) t)))
+      (read-char stream)
+      t)))
+
+
+(defun consume (stream &rest chars)
+  "Consumes given chars from the stream and returns number of consumed chars."
+  (loop with counter = 0
+        for char = (peek-char nil stream)
+        if (member char chars :test #'char=)
+          do (progn (read-char stream)
+                    (incf counter))
+        else
+          do (return counter)
+        finally (return counter)))
+
 
 (declaim (inline intern-header-name))
 (defun intern-header-name (string)
@@ -203,6 +240,7 @@
 			(return (+ 3 file-position))))
 	    ))))
 
+
 (defun read-rfc2822-header (stream)
   (let ((octets 0) fields
         (field-name-buffer (make-array 2048 :element-type 'character :fill-pointer 0)))
@@ -216,9 +254,15 @@
               (loop
                (loop for c = (prog1 (read-char stream) (incf octets))
 		     while (field-name-char-p c) do (write-char c field-name))
-               (incf octets (transmit-field-body stream field-body))
-               (push (cons (intern-header-name field-name-buffer)
-                           (get-output-stream-string field-body)) fields)
+               ;; consume spaces before header value
+               (incf octets
+                     (consume stream #\Space))
+                
+               (incf octets (read-field-body stream field-body))
+                (let ((field-value (get-output-stream-string field-body)))
+                  (push (cons (intern-header-name field-name-buffer)
+                              field-value)
+                        fields))
                (setf (fill-pointer field-name-buffer) 0)
                (when-let (n (accept-newline stream)) (incf octets) (return)))))
           (values (nreverse fields) octets))
