@@ -1,6 +1,13 @@
-# mel-base
+==========
+ mel-base
+==========
 
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/neonsquare/mel-base?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+This fork contains patches from other forks.
+
+See ChangeLog.rst for more details.
+
+Older project description
+=========================
 
 This library handles e-mail messages as first-class objects in Common Lisp. You can access messages from local Maildir folders or remote POP3, IMAP or SMTP servers. Reading and writing messages is all abstracted through a generic folder protocol: You can easily copy or move e-mails from a source folder (Maildir, POP3, IMAP) to different sink-folders (Maildir, IMAP, SMTP) using the same commands. Sending an E-Mail using MEL-BASE is done by just copying from its source folder to a SMTP folder.
 
