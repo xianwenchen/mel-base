@@ -103,28 +103,31 @@
    (unseen :initform nil)
    (messages :initform nil)
    (last-command :initform nil :accessor last-command)
-   (state :accessor state :initarg :state :initform :disconnected)))
+   (state :accessor state :initarg :state :initform :disconnected)
+   (read-only :accessor read-only :initarg :read-only :initform :read-only)))
 
 (defclass imaps-folder (imap-folder) ())
                   
-(defun make-imap-folder (&key host (port 143) username password (mailbox "INBOX"))
+(defun make-imap-folder (&key host (port 143) username password (mailbox "INBOX") read-only)
   (make-instance 'imap-folder
                  :name (format nil "imap://~A!~A@~A:~A" username password host port)
                  :host host
                  :port port
                  :username username
                  :password password
-		 :mailbox mailbox
+		             :mailbox mailbox
+                 :read-only read-only
                  :state :disconnected))
 
-(defun make-imaps-folder (&key host (port 993) username password (mailbox "INBOX"))
+(defun make-imaps-folder (&key host (port 993) username password (mailbox "INBOX") read-only)
   (make-instance 'imaps-folder
                  :name (format nil "imaps://~A!~A@~A:~A" username password host port)
                  :host host
                  :port port
                  :username username
                  :password password
-		 :mailbox mailbox
+                 :mailbox mailbox
+                 :read-only read-only
                  :state :disconnected))
 
 (defmethod serialize-folder ((folder imap-folder) stream)
@@ -546,7 +549,7 @@
   (unless (connection folder)
     (ensure-connection folder))
   (let ((stream (connection folder)))
-    (format stream "~A select ~A~A~A" "t01" (mailbox folder)
+    (format stream "~A ~A ~A~A~A" "t01" (if (read-only folder) "examine" "select") (mailbox folder)
 	    #\return #\linefeed)
     (force-output stream)
     (let (recent exists)
@@ -591,7 +594,7 @@
     (close (connection folder))))
 
 (defun examine-mailbox (folder)
-  (send-command folder "~A select ~A" "t01" (mailbox folder))
+  (send-command folder "~A examine ~A" "t01" (mailbox folder))
   (process-response folder))
 
 (defun expunge-mailbox (folder)
