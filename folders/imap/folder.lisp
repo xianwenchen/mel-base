@@ -885,10 +885,22 @@
   (declare (ignore message))
   (cerror "Continue without setting the RECENT flag" "It is not possible to modify the RECENT flag manually"))
 
+(defmethod mark-message-using-folder ((folder imap-folder) message flag)
+  (send-command folder "~A uid store ~A +flags (~A)" "t01"
+	  (uid message)
+    (concatenate 'string "\\" (symbol-name flag)))
+  (process-response folder))
+
 (defmethod unmark-message-using-folder ((folder imap-folder) message (flag (eql :recent)))
   (declare (ignore message))
   #+nil
   (cerror "Continue without unsetting the RECENT flag" "It is not possible to modify the RECENT flag manually"))
+
+(defmethod unmark-message-using-folder ((folder imap-folder) message flag)
+  (send-command folder "~A uid store ~A -flags (~A)" "t01"
+	  (uid message)
+    (concatenate 'string "\\" (symbol-name flag)))
+  (process-response folder))
 
 ;; Sender Protocol
 
