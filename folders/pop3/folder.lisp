@@ -104,7 +104,7 @@
 (defmethod ensure-connection ((folder pop3-folder))
   (when (eq (state folder) :disconnected)
     (setf (connection-stream folder) (mel.network:make-connection 
-				      :element-type 'character
+				      :element-type '(unsigned-byte 8)
                                       :remote-host (host folder)
                                       :remote-port (pop3-port folder)))
     (setf (greeting folder) (read-line (connection-stream folder))
