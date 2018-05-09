@@ -2,6 +2,11 @@
  Changes in mel-base
 =====================
 
+Unreleased
+==========
+
+* Fixed use of flexi-streams for pop3 (thanks to Rafael Jesús Alcántara Pérez)
+
 0.10.0
 ======
 
